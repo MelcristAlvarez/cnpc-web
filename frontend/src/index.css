@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cnpc-dark: #0B2447;
+  --color-cnpc-accent: #C4D600;
+  --color-cnpc-gold: #FFC72C;
+}
+
+/* Smooth scrolling for the whole page */
+html {
+  scroll-behavior: smooth;
+}
