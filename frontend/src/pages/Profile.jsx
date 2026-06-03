@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Settings, MapPin, Calendar, Tag, Save, UserCircle, Cake, Hash, Users, Camera, LogOut, ShieldCheck } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Profile = () => {
   const { user, token, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       if (user && token) {
         try {
-          const res = await fetch('http://localhost:5000/api/users/profile', {
+          const res = await fetch(`${API_URL}/api/users/profile`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (res.ok) {
@@ -137,10 +139,9 @@ const Profile = () => {
         formData.append('profileImage', imageFile);
       }
 
-      const res = await fetch('http://localhost:5000/api/users/profile', {
+      const res = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: { 
-          // Do NOT set Content-Type here; the browser handles it automatically for FormData
           Authorization: `Bearer ${token}` 
         },
         body: formData

@@ -3,6 +3,8 @@ import { MapPin, Navigation, Map as MapIcon, Loader2, Plus, Trash2, X, Image as 
 import ImageCropper from '../components/ImageCropper';
 import getCroppedImg from '../utils/cropUtils';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Courts = () => {
   const [courts, setCourts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +30,7 @@ const Courts = () => {
 
   const fetchCourts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/courts/approved');
+      const response = await fetch(`${API_URL}/api/courts/approved`);
       if (response.ok) setCourts(await response.json());
     } catch (error) { console.error("Failed to fetch courts:", error); } 
     finally { setIsLoading(false); }
@@ -70,7 +72,7 @@ const Courts = () => {
       formData.append('submitterName', 'Anonymous Member');
       suggestedImages.forEach((file) => formData.append('images', file));
 
-      const response = await fetch('http://localhost:5000/api/courts', { method: 'POST', body: formData });
+      const response = await fetch(`${API_URL}/api/courts`, { method: 'POST', body: formData });
 
       if (response.ok) {
         alert('Court suggestion submitted! Our admins will review it shortly.');

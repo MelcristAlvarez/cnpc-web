@@ -6,6 +6,9 @@ import ImageCropper from '../components/ImageCropper';
 import { Shield, Megaphone, Calendar, ShoppingBag, Plus, Image as ImageIcon, Pin, MapPin, Clock, UserPlus, Loader2, Trash2, ArrowDownUp, Edit3, X, AlignLeft, CheckCircle, XCircle, Award, Mail, Phone, Map as MapIcon, Users, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
 import { FaFacebook } from 'react-icons/fa';
 
+// USE THE LIVE VERCEL BACKEND URL IF IT EXISTS, OTHERWISE FALLBACK TO LOCALHOST
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Admin = () => {
   const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -83,14 +86,14 @@ const Admin = () => {
   // =========================================
   // FETCHERS
   // =========================================
-  const fetchAdminPosts = async () => { try { const res = await fetch('http://localhost:5000/api/posts'); if (res.ok) setAdminPosts(await res.json()); } catch (err) {} };
-  const fetchPendingItems = async () => { try { const res = await fetch('http://localhost:5000/api/items/pending', { headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingItems(await res.json()); } catch (err) {} };
-  const fetchPendingCoaches = async () => { try { const res = await fetch('http://localhost:5000/api/coaches/pending', { headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingCoaches(await res.json()); } catch (err) {} };
-  const fetchApprovedCoaches = async () => { try { const res = await fetch('http://localhost:5000/api/coaches/approved'); if (res.ok) setApprovedCoaches(await res.json()); } catch (err) {} };
-  const fetchPendingCourts = async () => { try { const res = await fetch('http://localhost:5000/api/courts/pending', { headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingCourts(await res.json()); } catch (err) {} };
-  const fetchApprovedCourts = async () => { try { const res = await fetch('http://localhost:5000/api/courts/approved'); if (res.ok) setApprovedCourts(await res.json()); } catch (err) {} };
-  const fetchAdminMembers = async () => { try { const res = await fetch('http://localhost:5000/api/members'); if (res.ok) setAdminMembers(await res.json()); } catch (err) {} };
-  const fetchAboutImages = async () => { try { const res = await fetch('http://localhost:5000/api/about-images'); if (res.ok) setAboutImages(await res.json()); } catch (err) {} };
+  const fetchAdminPosts = async () => { try { const res = await fetch(`${API_URL}/api/posts`); if (res.ok) setAdminPosts(await res.json()); } catch (err) {} };
+  const fetchPendingItems = async () => { try { const res = await fetch(`${API_URL}/api/items/pending`, { headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingItems(await res.json()); } catch (err) {} };
+  const fetchPendingCoaches = async () => { try { const res = await fetch(`${API_URL}/api/coaches/pending`, { headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingCoaches(await res.json()); } catch (err) {} };
+  const fetchApprovedCoaches = async () => { try { const res = await fetch(`${API_URL}/api/coaches/approved`); if (res.ok) setApprovedCoaches(await res.json()); } catch (err) {} };
+  const fetchPendingCourts = async () => { try { const res = await fetch(`${API_URL}/api/courts/pending`, { headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingCourts(await res.json()); } catch (err) {} };
+  const fetchApprovedCourts = async () => { try { const res = await fetch(`${API_URL}/api/courts/approved`); if (res.ok) setApprovedCourts(await res.json()); } catch (err) {} };
+  const fetchAdminMembers = async () => { try { const res = await fetch(`${API_URL}/api/members`); if (res.ok) setAdminMembers(await res.json()); } catch (err) {} };
+  const fetchAboutImages = async () => { try { const res = await fetch(`${API_URL}/api/about-images`); if (res.ok) setAboutImages(await res.json()); } catch (err) {} };
 
   // =========================================
   // ABOUT SECTION HANDLERS 
@@ -108,7 +111,7 @@ const Admin = () => {
       const formData = new FormData();
       formData.append('image', croppedFile);
       
-      const res = await fetch('http://localhost:5000/api/about-images', {
+      const res = await fetch(`${API_URL}/api/about-images`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -128,7 +131,7 @@ const Admin = () => {
   const handleDeleteAboutImage = async (id) => {
     if (!window.confirm("Remove this photo from the homepage slider?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/about-images/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${API_URL}/api/about-images/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) fetchAboutImages();
     } catch (err) {}
   };
@@ -140,7 +143,7 @@ const Admin = () => {
     e.preventDefault();
     setIsMemberSubmitting(true);
     try {
-      const url = editingMemberId ? `http://localhost:5000/api/members/${editingMemberId}` : 'http://localhost:5000/api/members';
+      const url = editingMemberId ? `${API_URL}/api/members/${editingMemberId}` : `${API_URL}/api/members`;
       const method = editingMemberId ? 'PUT' : 'POST';
       const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(memberForm) });
       if (res.ok) {
@@ -154,7 +157,7 @@ const Admin = () => {
   const handleDeleteMember = async (id) => {
     if (!window.confirm("Delete member?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/members/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${API_URL}/api/members/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) fetchAdminMembers();
     } catch (err) {}
   };
@@ -211,7 +214,7 @@ const Admin = () => {
 
         const payload = { name, location, gender, role: 'Member' };
         
-        await fetch('http://localhost:5000/api/members', {
+        await fetch(`${API_URL}/api/members`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify(payload)
@@ -240,13 +243,13 @@ const Admin = () => {
       const formData = new FormData(); formData.append('name', courtName); formData.append('area', courtArea); formData.append('address', courtAddress); formData.append('gmapsUrl', courtGmapsUrl);
       if (editingCourtId) formData.append('existingImages', JSON.stringify(courtExistingImages));
       courtNewImages.forEach((file) => formData.append('images', file));
-      const url = editingCourtId ? `http://localhost:5000/api/courts/${editingCourtId}` : `http://localhost:5000/api/courts`;
+      const url = editingCourtId ? `${API_URL}/api/courts/${editingCourtId}` : `${API_URL}/api/courts`;
       const res = await fetch(url, { method: editingCourtId ? 'PUT' : 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData });
-      if (res.ok) { if (!editingCourtId) { const newCourt = await res.json(); await fetch(`http://localhost:5000/api/courts/${newCourt._id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); } alert(editingCourtId ? 'Court updated!' : 'Court added!'); resetCourtForm(); fetchApprovedCourts(); }
+      if (res.ok) { if (!editingCourtId) { const newCourt = await res.json(); await fetch(`${API_URL}/api/courts/${newCourt._id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); } alert(editingCourtId ? 'Court updated!' : 'Court added!'); resetCourtForm(); fetchApprovedCourts(); }
     } catch (error) { } finally { setIsCourtSubmitting(false); }
   };
-  const handleApproveCourt = async (id) => { try { const res = await fetch(`http://localhost:5000/api/courts/${id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCourts(pendingCourts.filter(c => c._id !== id)); fetchApprovedCourts(); } } catch (error) { } };
-  const handleDeleteCourt = async (id) => { if (!window.confirm("Delete court?")) return; try { const res = await fetch(`http://localhost:5000/api/courts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCourts(pendingCourts.filter(c => c._id !== id)); setApprovedCourts(approvedCourts.filter(c => c._id !== id)); if (editingCourtId === id) resetCourtForm(); } } catch (error) {} };
+  const handleApproveCourt = async (id) => { try { const res = await fetch(`${API_URL}/api/courts/${id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCourts(pendingCourts.filter(c => c._id !== id)); fetchApprovedCourts(); } } catch (error) { } };
+  const handleDeleteCourt = async (id) => { if (!window.confirm("Delete court?")) return; try { const res = await fetch(`${API_URL}/api/courts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCourts(pendingCourts.filter(c => c._id !== id)); setApprovedCourts(approvedCourts.filter(c => c._id !== id)); if (editingCourtId === id) resetCourtForm(); } } catch (error) {} };
   const handleEditCourtClick = (court) => { setEditingCourtId(court._id); setCourtName(court.name); setCourtArea(court.area); setCourtAddress(court.address); setCourtGmapsUrl(court.gmapsUrl || ''); setCourtExistingImages(court.images || []); setCourtNewImages([]); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const resetCourtForm = () => { setEditingCourtId(null); setCourtName(''); setCourtArea(''); setCourtAddress(''); setCourtGmapsUrl(''); setCourtExistingImages([]); setCourtNewImages([]); };
   const removeCourtExistingImage = (idx) => setCourtExistingImages(courtExistingImages.filter((_, i) => i !== idx)); const removeCourtNewImage = (idx) => setCourtNewImages(courtNewImages.filter((_, i) => i !== idx));
@@ -259,20 +262,20 @@ const Admin = () => {
     try {
       const formData = new FormData(); formData.append('name', coachName); formData.append('tagline', coachTagline); formData.append('certs', coachCerts.filter(c => c.trim() !== '').join(',')); formData.append('achievements', coachAchievements.filter(a => a.trim() !== '').join(',')); formData.append('email', coachEmail); formData.append('facebook', coachFacebook); formData.append('phone', coachPhone);
       if (previewUrl && croppedAreaPixels) { try { formData.append('image', await getCroppedImg(previewUrl, croppedAreaPixels)); } catch (err) { formData.append('image', coachImageFile); } } else if (coachImageFile) { formData.append('image', coachImageFile); }
-      const res = await fetch(editingCoachId ? `http://localhost:5000/api/coaches/${editingCoachId}` : `http://localhost:5000/api/coaches`, { method: editingCoachId ? 'PUT' : 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData });
-      if (res.ok) { if (!editingCoachId) { const newCoach = await res.json(); await fetch(`http://localhost:5000/api/coaches/${newCoach._id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); } alert(editingCoachId ? 'Coach updated successfully!' : 'Community Coach added successfully!'); resetCoachForm(); fetchApprovedCoaches(); } 
+      const res = await fetch(editingCoachId ? `${API_URL}/api/coaches/${editingCoachId}` : `${API_URL}/api/coaches`, { method: editingCoachId ? 'PUT' : 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData });
+      if (res.ok) { if (!editingCoachId) { const newCoach = await res.json(); await fetch(`${API_URL}/api/coaches/${newCoach._id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); } alert(editingCoachId ? 'Coach updated successfully!' : 'Community Coach added successfully!'); resetCoachForm(); fetchApprovedCoaches(); } 
     } catch (error) {} finally { setIsCoachSubmitting(false); }
   };
-  const handleApproveCoach = async (id) => { try { const res = await fetch(`http://localhost:5000/api/coaches/${id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCoaches(pendingCoaches.filter(coach => coach._id !== id)); fetchApprovedCoaches(); } } catch (error) {} };
-  const handleDeleteCoach = async (id) => { if (!window.confirm("Delete coach?")) return; try { const res = await fetch(`http://localhost:5000/api/coaches/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCoaches(pendingCoaches.filter(coach => coach._id !== id)); setApprovedCoaches(approvedCoaches.filter(coach => coach._id !== id)); if (editingCoachId === id) resetCoachForm(); } } catch (error) {} };
+  const handleApproveCoach = async (id) => { try { const res = await fetch(`${API_URL}/api/coaches/${id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCoaches(pendingCoaches.filter(coach => coach._id !== id)); fetchApprovedCoaches(); } } catch (error) {} };
+  const handleDeleteCoach = async (id) => { if (!window.confirm("Delete coach?")) return; try { const res = await fetch(`${API_URL}/api/coaches/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setPendingCoaches(pendingCoaches.filter(coach => coach._id !== id)); setApprovedCoaches(approvedCoaches.filter(coach => coach._id !== id)); if (editingCoachId === id) resetCoachForm(); } } catch (error) {} };
   const handleEditCoachClick = (coach) => { setEditingCoachId(coach._id); setCoachName(coach.name); setCoachTagline(coach.tagline); setCoachCerts(coach.certs ? coach.certs.split(',') : ['']); setCoachAchievements(coach.achievements ? coach.achievements.split(',') : ['']); setCoachEmail(coach.email || ''); setCoachFacebook(coach.facebook || ''); setCoachPhone(coach.phone || ''); setCurrentCoachImage(coach.image); setCoachImageFile(null); setPreviewUrl(null); setCroppedAreaPixels(null); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const resetCoachForm = () => { setEditingCoachId(null); setCoachName(''); setCoachTagline(''); setCoachCerts(['']); setCoachAchievements(['']); setCoachEmail(''); setCoachFacebook(''); setCoachPhone(''); setCurrentCoachImage(null); setCoachImageFile(null); setPreviewUrl(null); setCroppedAreaPixels(null); };
 
   // =========================================
   // MARKETPLACE HANDLERS
   // =========================================
-  const handleApproveItem = async (id) => { try { const res = await fetch(`http://localhost:5000/api/items/${id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingItems(pendingItems.filter(item => item._id !== id)); } catch (error) {} };
-  const handleRejectItem = async (id) => { if (!window.confirm("Reject listing?")) return; try { const res = await fetch(`http://localhost:5000/api/items/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingItems(pendingItems.filter(item => item._id !== id)); } catch (error) {} };
+  const handleApproveItem = async (id) => { try { const res = await fetch(`${API_URL}/api/items/${id}/approve`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingItems(pendingItems.filter(item => item._id !== id)); } catch (error) {} };
+  const handleRejectItem = async (id) => { if (!window.confirm("Reject listing?")) return; try { const res = await fetch(`${API_URL}/api/items/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) setPendingItems(pendingItems.filter(item => item._id !== id)); } catch (error) {} };
 
   // =========================================
   // POST HANDLERS 
@@ -321,7 +324,7 @@ const Admin = () => {
       if (editingPostId) formData.append('existingImages', JSON.stringify(existingImages));
       postImages.forEach((file) => formData.append('images', file));
       
-      const res = await fetch(editingPostId ? `http://localhost:5000/api/posts/${editingPostId}` : `http://localhost:5000/api/posts`, { 
+      const res = await fetch(editingPostId ? `${API_URL}/api/posts/${editingPostId}` : `${API_URL}/api/posts`, { 
         method: editingPostId ? 'PUT' : 'POST', 
         headers: { Authorization: `Bearer ${token}` }, 
         body: formData 
@@ -334,7 +337,7 @@ const Admin = () => {
     } catch (error) {} finally { setIsSubmitting(false); }
   };
   
-  const handleDeletePost = async (id) => { if (!window.confirm("Delete post?")) return; try { const res = await fetch(`http://localhost:5000/api/posts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setAdminPosts(adminPosts.filter(post => post._id !== id)); if (editingPostId === id) resetPostForm(); } } catch (error) {} };
+  const handleDeletePost = async (id) => { if (!window.confirm("Delete post?")) return; try { const res = await fetch(`${API_URL}/api/posts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { setAdminPosts(adminPosts.filter(post => post._id !== id)); if (editingPostId === id) resetPostForm(); } } catch (error) {} };
   const handleEditPostClick = (post) => { setEditingPostId(post._id); setPostTitle(post.title); setPostContent(post.content); setIsPinned(post.isPinned); setExistingImages(post.images || []); setPostImages([]); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const resetPostForm = () => { setEditingPostId(null); setPostTitle(''); setPostContent(''); setExistingImages([]); setPostImages([]); setIsPinned(false); };
   const handleRemoveExistingImage = (idx) => setExistingImages(existingImages.filter((_, i) => i !== idx)); 

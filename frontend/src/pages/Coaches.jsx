@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle2, Star, Mail, Phone, Loader2 } from 'lucide-react';
-import { FaFacebook } from 'react-icons/fa'; // Our new specific brand icon
+import { FaFacebook } from 'react-icons/fa'; 
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Coaches = () => {
   const [coaches, setCoaches] = useState([]);
@@ -9,7 +11,7 @@ const Coaches = () => {
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/coaches/approved');
+        const response = await fetch(`${API_URL}/api/coaches/approved`);
         if (response.ok) {
           const data = await response.json();
           setCoaches(data);

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; 
-import { ArrowDown, ShoppingBag, Trophy, Users, ShieldCheck, MapPin, Megaphone, Info, X, ChevronLeft, ChevronRight, Target, Award, Star, Maximize2, Image as ImageIcon, Dumbbell, QrCode, Handshake, ExternalLink, MessageSquare, Activity, Pin, Calendar } from 'lucide-react';
+import { ArrowDown, ShoppingBag, Trophy, Users, ShieldCheck, MapPin, Megaphone, X, ChevronLeft, ChevronRight, Award, Star, Maximize2, Image as ImageIcon, ExternalLink, CheckCircle, Pin } from 'lucide-react';
 import heroImg from '../assets/images/hero.jpg'; 
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // =========================================
 // HELPER COMPONENT: SmartLinkifier
@@ -12,12 +14,12 @@ const SmartLinkifier = ({ text, isExpanded }) => {
   const parts = text.split(urlRegex);
 
   return (
-    <div className={`text-slate-200 leading-relaxed whitespace-pre-wrap mb-2 ${isExpanded ? '' : 'line-clamp-4'}`}>
+    <div className={`text-slate-200 leading-relaxed whitespace-pre-wrap mb-2 text-xs sm:text-sm md:text-base ${isExpanded ? '' : 'line-clamp-4'}`}>
       {parts.map((part, index) => {
         if (part.match(urlRegex)) {
           const href = part.startsWith('www.') ? `https://${part}` : part;
           return (
-            <a key={index} href={href} target="_blank" rel="noopener noreferrer" className="text-cnpc-accent hover:text-lime-400 font-bold underline transition-colors">
+            <a key={index} href={href} target="_blank" rel="noopener noreferrer" className="text-cnpc-accent hover:text-lime-400 font-bold underline transition-colors break-all">
               {part}
             </a>
           );
@@ -49,20 +51,20 @@ const ImageLightboxModal = ({ images, currentIndex, onClose, onPrev, onNext }) =
   if (!images || images.length === 0) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 md:p-12 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-2 md:p-12 animate-in fade-in duration-300">
       <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-gradient-to-b from-black/60 to-transparent">
-        <div className="text-white font-medium">Photo {currentIndex + 1} of {images.length}</div>
+        <div className="text-white font-medium text-xs sm:text-sm md:text-base">Photo {currentIndex + 1} of {images.length}</div>
         <button onClick={onClose} className="p-2 rounded-full bg-black/40 text-white/70 hover:text-white hover:bg-black/80 transition-all">
-          <X className="w-7 h-7" />
+          <X className="w-5 h-5 md:w-7 md:h-7" />
         </button>
       </div>
-      <div className="relative max-w-full max-h-full flex items-center justify-center p-4 md:p-0" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="relative w-full max-w-full max-h-full flex items-center justify-center p-2 md:p-0" onClick={(e) => e.target === e.currentTarget && onClose()}>
         <img src={images[currentIndex]} alt={`Full screen view ${currentIndex + 1}`} className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl animate-in zoom-in-75 duration-300" />
       </div>
       {images.length > 1 && (
         <>
-          <button onClick={onPrev} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/60 text-white/60 hover:text-white hover:bg-black/90 transition-all z-20"><ChevronLeft className="w-8 h-8" /></button>
-          <button onClick={onNext} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/60 text-white/60 hover:text-white hover:bg-black/90 transition-all z-20"><ChevronRight className="w-8 h-8" /></button>
+          <button onClick={onPrev} className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 md:p-3 rounded-full bg-black/60 text-white/60 hover:text-white hover:bg-black/90 transition-all z-20"><ChevronLeft className="w-5 h-5 md:w-8 md:h-8" /></button>
+          <button onClick={onNext} className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 md:p-3 rounded-full bg-black/60 text-white/60 hover:text-white hover:bg-black/90 transition-all z-20"><ChevronRight className="w-5 h-5 md:w-8 md:h-8" /></button>
         </>
       )}
     </div>
@@ -87,10 +89,10 @@ const Home = () => {
     const fetchAllData = async () => {
       try {
         const [postsRes, courtsRes, coachesRes, aboutRes] = await Promise.all([
-          fetch('http://localhost:5000/api/posts'),
-          fetch('http://localhost:5000/api/courts/approved'),
-          fetch('http://localhost:5000/api/coaches/approved'),
-          fetch('http://localhost:5000/api/about-images')
+          fetch(`${API_URL}/api/posts`),
+          fetch(`${API_URL}/api/courts/approved`),
+          fetch(`${API_URL}/api/coaches/approved`),
+          fetch(`${API_URL}/api/about-images`)
         ]);
 
         if (postsRes.ok) setPosts(await postsRes.json());
@@ -112,7 +114,6 @@ const Home = () => {
     return () => clearTimeout(loadingTimer);
   }, []);
 
-  // AUTO-SLIDER LOGIC FOR ABOUT SECTION
   useEffect(() => {
     if (aboutImages && aboutImages.length > 1) {
       const timer = setInterval(() => {
@@ -122,14 +123,12 @@ const Home = () => {
     }
   }, [aboutImages]);
 
-  // FORMATTING HELPERS
   const formatDate = (dateString) => {
     if (!dateString) return '';
-    const options = { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' };
+    const options = { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
-  // LIGHTBOX HANDLERS
   const openLightbox = (postImages, clickedIndex) => {
     if (!postImages || postImages.length === 0) return;
     setLightbox({ isOpen: true, images: postImages, currentIndex: clickedIndex });
@@ -140,43 +139,16 @@ const Home = () => {
 
   const fadeUp = (delayClass) => `transition-all duration-1000 ease-out transform ${isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${delayClass}`;
 
-  // CAROUSEL LOGIC HELPERS
-  const nextCourtSlide = () => { const slider = document.getElementById('courts-slider'); if (slider) slider.scrollBy({ left: 320, behavior: 'smooth' }); };
-  const prevCourtSlide = () => { const slider = document.getElementById('courts-slider'); if (slider) slider.scrollBy({ left: -320, behavior: 'smooth' }); };
-  const nextCoachSlide = () => { const slider = document.getElementById('coaches-slider'); if (slider) slider.scrollBy({ left: 320, behavior: 'smooth' }); };
-  const prevCoachSlide = () => { const slider = document.getElementById('coaches-slider'); if (slider) slider.scrollBy({ left: -320, behavior: 'smooth' }); };
-
-  useEffect(() => {
-    if (courts && courts.length > 0) {
-      const courtInterval = setInterval(() => {
-        const slider = document.getElementById('courts-slider');
-        if (slider) {
-          if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10) { slider.scrollTo({ left: 0, behavior: 'smooth' }); } 
-          else { slider.scrollBy({ left: 320, behavior: 'smooth' }); }
-        }
-      }, 5000);
-      return () => clearInterval(courtInterval);
-    }
-  }, [courts]);
-
-  useEffect(() => {
-    if (coaches && coaches.length > 0) {
-      const coachInterval = setInterval(() => {
-        const slider = document.getElementById('coaches-slider');
-        if (slider) {
-          if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10) { slider.scrollTo({ left: 0, behavior: 'smooth' }); } 
-          else { slider.scrollBy({ left: 320, behavior: 'smooth' }); }
-        }
-      }, 4000); 
-      return () => clearInterval(coachInterval);
-    }
-  }, [coaches]);
+  const nextCourtSlide = () => { const slider = document.getElementById('courts-slider'); if (slider) slider.scrollBy({ left: 280, behavior: 'smooth' }); };
+  const prevCourtSlide = () => { const slider = document.getElementById('courts-slider'); if (slider) slider.scrollBy({ left: -280, behavior: 'smooth' }); };
+  const nextCoachSlide = () => { const slider = document.getElementById('coaches-slider'); if (slider) slider.scrollBy({ left: 280, behavior: 'smooth' }); };
+  const prevCoachSlide = () => { const slider = document.getElementById('coaches-slider'); if (slider) slider.scrollBy({ left: -280, behavior: 'smooth' }); };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0B0F19] via-[#0A192F] to-[#0B0F19] pt-20 px-4 lg:px-12 overflow-hidden pointer-events-none">
+      <div className="min-h-screen bg-gradient-to-b from-[#0B0F19] via-[#0A192F] to-[#0B0F19] pt-20 px-4 overflow-hidden pointer-events-none">
         <div className="max-w-5xl mx-auto w-full flex flex-col items-center gap-6 mt-12 mb-32">
-          <div className="w-full max-w-xl lg:max-w-3xl h-[35vh] lg:h-[45vh] rounded-3xl bg-white/5 animate-pulse"></div>
+          <div className="w-full max-w-full lg:max-w-3xl h-[35vh] lg:h-[45vh] rounded-3xl bg-white/5 animate-pulse"></div>
         </div>
       </div>
     );
@@ -190,26 +162,26 @@ const Home = () => {
       )}
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 lg:px-12 pt-20 pb-8">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+      <section className="relative min-h-[90vh] flex items-center justify-center px-4 sm:px-6 lg:px-12 pt-24 pb-8">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:25px_25px] md:bg-[size:40px_40px] pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center gap-6 mt-2 text-center">
+        <div className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center gap-5 md:gap-8 text-center">
           <div className={`w-full flex justify-center ${fadeUp('delay-100')}`}>
-            <div className="relative max-w-xl lg:max-w-3xl w-full rounded-3xl overflow-hidden shadow-[0_20px_40px_-12px_rgba(0,0,0,0.7)] border border-white/10">
-              <img src={heroImg} alt="Pickleball Players" className="w-full h-auto max-h-[35vh] lg:max-h-[45vh] object-cover block" />
+            <div className="relative w-full max-w-full lg:max-w-3xl rounded-xl md:rounded-3xl overflow-hidden shadow-[0_20px_40px_-12px_rgba(0,0,0,0.7)] border border-white/10">
+              <img src={heroImg} alt="Pickleball Players" className="w-full h-auto max-h-[25vh] sm:max-h-[35vh] lg:max-h-[45vh] object-cover block" />
             </div>
           </div>
 
-          <div className={`flex flex-col items-center max-w-4xl w-full px-2 ${fadeUp('delay-300')}`}>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-md py-1.5 px-4 rounded-full border border-white/10 mb-4 shadow-lg">
-              <ShieldCheck className="w-4 h-4 text-cnpc-accent" />
-              <span className="text-slate-300 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase">Member of the Philippine Pickleball Federation</span>
+          <div className={`flex flex-col items-center max-w-4xl w-full px-1 ${fadeUp('delay-300')}`}>
+            <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-md py-1 px-3 rounded-full border border-white/10 mb-3 shadow-lg">
+              <ShieldCheck className="w-3.5 h-3.5 text-cnpc-accent shrink-0" />
+              <span className="text-slate-300 text-[8px] md:text-[10px] font-bold tracking-widest uppercase">Member of the Philippine Pickleball Federation</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4 uppercase leading-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-slate-100 to-slate-400">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-3 uppercase leading-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-slate-100 to-slate-400">
               Welcome to <br/> 
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cnpc-accent to-lime-400 drop-shadow-[0_2px_10px_rgba(196,214,0,0.15)] block mt-1">Camarines Norte Pickleball Club</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cnpc-accent to-lime-400 drop-shadow-[0_2px_10px_rgba(196,214,0,0.15)] block mt-0.5">Camarines Norte<br className="block sm:hidden" /> Pickleball Club</span>
             </h1>
-            <p className="text-base md:text-lg text-slate-400 font-medium max-w-xl mb-6 leading-relaxed balance">
+            <p className="text-xs sm:text-sm md:text-lg text-slate-400 font-medium max-w-xl mb-6 leading-relaxed balance px-3">
               Connecting players. Building champions. The official hub of Camarines Norte Pickleball.
             </p>
             <a 
@@ -218,10 +190,10 @@ const Home = () => {
                 e.preventDefault();
                 document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
               }}
-              className="inline-flex items-center gap-3 bg-gradient-to-r from-cnpc-accent to-lime-400 text-slate-950 px-8 py-3 rounded-full font-black uppercase tracking-widest hover:brightness-110 hover:-translate-y-1 transition-all duration-200 shadow-[0_10px_30px_rgba(196,214,0,0.25)] text-sm"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cnpc-accent to-lime-400 text-slate-950 px-5 py-2.5 md:px-8 md:py-4 rounded-full font-black uppercase tracking-widest hover:brightness-110 hover:-translate-y-0.5 transition-all duration-200 shadow-[0_10px_30px_rgba(196,214,0,0.25)] text-[11px] md:text-sm"
             >
               Explore the Hub
-              <ArrowDown className="w-4 h-4 animate-bounce" />
+              <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
             </a>
           </div>
         </div>
@@ -230,29 +202,29 @@ const Home = () => {
       {/* ==============================================
           ABOUT US SECTION
           ============================================== */}
-      <div id="about" className={`scroll-mt-32 py-24 border-t border-white/5 relative z-10 bg-[#0A192F]/50 ${fadeUp('delay-500')}`}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+      <div id="about" className={`scroll-mt-24 py-12 md:py-24 border-t border-white/5 relative z-10 bg-[#0A192F]/50 ${fadeUp('delay-500')}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="flex flex-col lg:flex-row gap-8 md:gap-16 items-center">
             
-            <div className="lg:w-1/2 text-center lg:text-left">
-              <div className="inline-block bg-white/5 border border-white/10 text-cnpc-accent text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            <div className="w-full lg:w-1/2 text-center lg:text-left">
+              <div className="inline-block bg-white/5 border border-white/10 text-cnpc-accent text-[9px] md:text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3 md:mb-6">
                 Our Story
               </div>
-              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-3 md:mb-6">
                 About The <span className="text-cnpc-accent">Club</span>
               </h2>
-              <p className="text-slate-400 text-lg leading-relaxed mb-6">
-                Our pickleball journey began with Freemason brothers discovering the sport. We soon introduced it to our families, friends, and the community—sparking a wave of interest.
+              <p className="text-slate-400 text-xs sm:text-sm md:text-lg leading-relaxed mb-3 md:mb-6">
+                Our pickleball journey began with Freemason brothers discovering the sport. We soon introduced it to our families, friends, and the community, sparking a wave of interest.
               </p>
-              <p className="text-slate-400 text-lg leading-relaxed">
-                Today, we've grown to 200 members, hosted 2 local tournaments, and proudly organized the first DUPR-sanctioned match in the province with 60 participants. Promoting fun, fitness, and fellowship—on and off the court!
+              <p className="text-slate-400 text-xs sm:text-sm md:text-lg leading-relaxed">
+                Today, we've grown to 200 members, hosted 2 local tournaments, and proudly organized the first DUPR-sanctioned match in the province with 60 participants. Promoting fun, fitness, and fellowship, on and off the court!
               </p>
             </div>
 
-            <div className="lg:w-1/2 w-full">
+            <div className="w-full lg:w-1/2">
               {aboutImages && aboutImages.length > 0 ? (
                 <div 
-                  className="relative w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#0B0F19] group cursor-pointer"
+                  className="relative w-full h-[220px] sm:h-[300px] md:h-[400px] rounded-xl md:rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#0B0F19] group cursor-pointer"
                   onClick={() => openLightbox(aboutImages.map(img => img.image), currentAboutIndex)}
                 >
                   {aboutImages.map((imgObj, idx) => (
@@ -269,11 +241,11 @@ const Home = () => {
                     </div>
                   ))}
                   
-                  <div className="absolute top-4 right-4 z-30 bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-lg border border-white/10">
+                  <div className="absolute top-4 right-4 z-30 bg-black/50 backdrop-blur-md text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-lg border border-white/10 hidden md:block">
                     <Maximize2 className="w-5 h-5" />
                   </div>
 
-                  <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-2">
+                  <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-1.5">
                     {aboutImages.map((_, idx) => (
                       <button 
                         key={idx}
@@ -281,15 +253,15 @@ const Home = () => {
                           e.stopPropagation(); 
                           setCurrentAboutIndex(idx);
                         }}
-                        className={`w-2 h-2 rounded-full transition-all ${idx === currentAboutIndex ? 'bg-cnpc-accent w-6' : 'bg-white/50 hover:bg-white'}`}
+                        className={`w-1.5 h-1.5 rounded-full transition-all ${idx === currentAboutIndex ? 'bg-cnpc-accent w-4' : 'bg-white/50 hover:bg-white'}`}
                       />
                     ))}
                   </div>
                 </div>
               ) : (
-                 <div className="w-full h-[300px] rounded-3xl border border-white/10 bg-white/5 flex items-center justify-center text-slate-500 flex-col gap-4 shadow-inner">
-                   <ImageIcon className="w-12 h-12 opacity-50" />
-                   <p className="text-sm font-bold uppercase tracking-widest">More photos coming soon</p>
+                 <div className="w-full h-[200px] sm:h-[260px] rounded-xl md:rounded-3xl border border-white/10 bg-white/5 flex items-center justify-center text-slate-500 flex-col gap-3 shadow-inner">
+                   <ImageIcon className="w-8 h-8 opacity-50" />
+                   <p className="text-[10px] font-bold uppercase tracking-widest text-center px-4">More photos coming soon</p>
                  </div>
               )}
             </div>
@@ -298,90 +270,201 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 2. FEATURES SECTION */}
-      <section id="features" className="py-20 px-6 md:px-12 text-white relative border-t border-white/5">
+      {/* ==============================================
+          MEMBERSHIP REGISTRATION (SPLIT LAYOUT DESIGN)
+          ============================================== */}
+      <section id="membership" className="py-12 md:py-24 px-4 sm:px-6 md:px-12 relative z-10 bg-[#0B0F19] border-t border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 uppercase bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">Club Features</h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-cnpc-accent to-lime-400 mx-auto rounded-full"></div>
+          
+          <div className="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row">
+            
+            {/* Left Panel: Pricing Card */}
+            <div className="lg:w-2/5 p-6 sm:p-10 md:p-14 bg-gradient-to-b from-[#112A58]/80 to-[#0A192F]/80 flex flex-col justify-center relative overflow-hidden text-center lg:text-left">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-cnpc-accent/10 blur-[80px] rounded-full pointer-events-none"></div>
+              <div className="relative z-10">
+                <div className="inline-block bg-cnpc-accent/10 text-cnpc-accent text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 md:mb-6 border border-cnpc-accent/20">
+                  Join The Community
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-2 md:mb-4">
+                  Official <br className="hidden lg:block"/> Membership
+                </h2>
+                <div className="flex items-baseline justify-center lg:justify-start gap-1.5 mb-3 md:mb-4">
+                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cnpc-accent">₱350</span>
+                  <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px] md:text-sm">/ Year</span>
+                </div>
+                <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed mb-6 md:mb-10 max-w-sm mx-auto lg:mx-0">
+                  Become an official member of the Camarines Norte Pickleball Club today. Your membership is valid for one full year from the date of approval.
+                </p>
+                <a 
+                  href="https://docs.google.com/forms/d/e/1FAIpQLScjfd4snulmyKM8lymDsETE3bM6-lDTYeuWqcdJG7-sK_TzAw/viewform"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cnpc-accent to-lime-400 text-slate-950 px-6 py-3 md:px-8 md:py-4 rounded-xl font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-[0_0_20px_rgba(196,214,0,0.3)] text-xs md:text-sm"
+                >
+                  Register Now <ExternalLink className="w-3.5 h-3.5 md:w-5 md:h-5" />
+                </a>
+              </div>
+            </div>
+
+            {/* Right Panel: Perks & Benefits Checkmarks */}
+            <div className="lg:w-3/5 p-6 sm:p-10 md:p-14 bg-white/[0.02]">
+              <h3 className="text-lg md:text-2xl font-black text-white uppercase tracking-wide mb-5 md:mb-8 flex items-center gap-2.5 justify-center lg:justify-start">
+                <Award className="w-5 h-5 md:w-7 md:h-7 text-cnpc-accent" />
+                Exclusive Member Perks
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8">
+                
+                <div className="flex items-start gap-3">
+                  <div className="bg-cnpc-accent/10 p-2 rounded-lg shrink-0 mt-0.5">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cnpc-accent" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-sm md:text-base mb-0.5">Sunday DUPR Games</h4>
+                    <p className="text-[11px] md:text-sm text-slate-400 leading-relaxed">Exclusive access to club-organized sanctioned matches to build your global rating.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-cnpc-accent/10 p-2 rounded-lg shrink-0 mt-0.5">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cnpc-accent" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-sm md:text-base mb-0.5">Discounted Clinics</h4>
+                    <p className="text-[11px] md:text-sm text-slate-400 leading-relaxed">Special member rates for training and coaching sessions with official instructors.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-cnpc-accent/10 p-2 rounded-lg shrink-0 mt-0.5">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cnpc-accent" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-sm md:text-base mb-0.5">Organized Open Plays</h4>
+                    <p className="text-[11px] md:text-sm text-slate-400 leading-relaxed">Priority access to reserved court times and open play schedules.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-cnpc-accent/10 p-2 rounded-lg shrink-0 mt-0.5">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cnpc-accent" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-sm md:text-base mb-0.5">Partner Deals & Gear</h4>
+                    <p className="text-[11px] md:text-sm text-slate-400 leading-relaxed">Discounted club balls and exclusive offers from our partnered businesses.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-cnpc-accent/10 p-2 rounded-lg shrink-0 mt-0.5">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cnpc-accent" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-sm md:text-base mb-0.5">Members Tournaments</h4>
+                    <p className="text-[11px] md:text-sm text-slate-400 leading-relaxed">Participate in beginner and intermediate club-only competitive events.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-cnpc-accent/10 p-2 rounded-lg shrink-0 mt-0.5">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cnpc-accent" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-sm md:text-base mb-0.5">Digital Club QR ID</h4>
+                    <p className="text-[11px] md:text-sm text-slate-400 leading-relaxed">Receive your official digital ID card for fast event check-ins and profiling.</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 2. FEATURES SECTION */}
+      <section id="features" className="py-12 md:py-20 px-4 sm:px-6 md:px-12 text-white relative border-t border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight mb-3 uppercase bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">Club Features</h2>
+            <div className="w-14 md:w-20 h-1 bg-gradient-to-r from-cnpc-accent to-lime-400 mx-auto rounded-full"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="group bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-md p-8 rounded-2xl border border-white/[0.05] hover:border-cnpc-accent/30 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between shadow-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+            <div className="group bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-md p-5 md:p-8 rounded-xl md:rounded-2xl border border-white/[0.05] hover:border-cnpc-accent/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between shadow-xl">
               <div>
-                <div className="w-14 h-14 bg-cnpc-accent/10 rounded-xl flex items-center justify-center text-cnpc-accent mb-6 group-hover:bg-cnpc-accent group-hover:text-slate-950 transition-all duration-300 shadow-inner">
-                  <ShoppingBag className="w-7 h-7" />
+                <div className="w-10 h-10 md:w-14 md:h-14 bg-cnpc-accent/10 rounded-lg md:rounded-xl flex items-center justify-center text-cnpc-accent mb-4 md:mb-6 group-hover:bg-cnpc-accent group-hover:text-slate-950 transition-all duration-300 shadow-inner">
+                  <ShoppingBag className="w-5 h-5 md:w-7 md:h-7" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3 text-white tracking-wide">Marketplace</h3>
-                <p className="text-slate-400 leading-relaxed mb-6 text-sm md:text-base">Gear up with custom apparel, professional paddles, and premium club merchandise.</p>
+                <h3 className="text-lg md:text-2xl font-bold mb-1.5 md:mb-3 text-white tracking-wide">Marketplace</h3>
+                <p className="text-slate-400 leading-relaxed mb-5 text-xs md:text-base">Gear up with custom apparel, professional paddles, and premium club merchandise.</p>
               </div>
-              <Link to="/marketplace" className="text-cnpc-accent font-bold group-hover:text-white uppercase text-sm tracking-wider flex items-center gap-2 transition-colors duration-300 mt-auto pt-4 border-t border-white/[0.03] w-max">Enter Shop →</Link>
+              <Link to="/marketplace" className="text-cnpc-accent font-bold group-hover:text-white uppercase text-[10px] md:text-sm tracking-wider flex items-center gap-1.5 transition-colors duration-300 mt-auto pt-3 border-t border-white/[0.03] w-max">Enter Shop →</Link>
             </div>
 
-            <div className="group bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-md p-8 rounded-2xl border border-white/[0.05] hover:border-cnpc-gold/30 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between shadow-xl">
+            <div className="group bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-md p-5 md:p-8 rounded-xl md:rounded-2xl border border-white/[0.05] hover:border-cnpc-gold/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between shadow-xl">
               <div>
-                <div className="w-14 h-14 bg-cnpc-gold/10 rounded-xl flex items-center justify-center text-cnpc-gold mb-6 group-hover:bg-cnpc-gold group-hover:text-slate-950 transition-all duration-300 shadow-inner">
-                  <Trophy className="w-7 h-7" />
+                <div className="w-10 h-10 md:w-14 md:h-14 bg-cnpc-gold/10 rounded-lg md:rounded-xl flex items-center justify-center text-cnpc-gold mb-4 md:mb-6 group-hover:bg-cnpc-gold group-hover:text-slate-950 transition-all duration-300 shadow-inner">
+                  <Trophy className="w-5 h-5 md:w-7 md:h-7" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3 text-white tracking-wide">DUPR Standings</h3>
-                <p className="text-slate-400 leading-relaxed mb-6 text-sm md:text-base">Check out the top players of the club and see who dominates the local community standings.</p>
+                <h3 className="text-lg md:text-2xl font-bold mb-1.5 md:mb-3 text-white tracking-wide">DUPR Standings</h3>
+                <p className="text-slate-400 leading-relaxed mb-5 text-xs md:text-base">Check out the top players of the club and see who dominates the local community standings.</p>
               </div>
-              <Link to="/dupr" className="text-cnpc-gold font-bold group-hover:text-white uppercase text-sm tracking-wider flex items-center gap-2 transition-colors duration-300 mt-auto pt-4 border-t border-white/[0.03] w-max">View Standings →</Link>
+              <Link to="/dupr" className="text-cnpc-gold font-bold group-hover:text-white uppercase text-[10px] md:text-sm tracking-wider flex items-center gap-1.5 transition-colors duration-300 mt-auto pt-3 border-t border-white/[0.03] w-max">View Standings →</Link>
             </div>
 
-            <div className="group bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-md p-8 rounded-2xl border border-white/[0.05] hover:border-white/20 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between shadow-xl">
+            <div className="group bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-md p-5 md:p-8 rounded-xl md:rounded-2xl border border-white/[0.05] hover:border-white/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between shadow-xl sm:col-span-2 lg:col-span-1">
               <div>
-                <div className="w-14 h-14 bg-white/5 rounded-xl flex items-center justify-center text-white mb-6 group-hover:bg-white group-hover:text-slate-950 transition-all duration-300 shadow-inner">
-                  <Users className="w-7 h-7" />
+                <div className="w-10 h-10 md:w-14 md:h-14 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center text-white mb-4 md:mb-6 group-hover:bg-white group-hover:text-slate-950 transition-all duration-300 shadow-inner">
+                  <Users className="w-5 h-5 md:w-7 md:h-7" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3 text-white tracking-wide">Club Directory</h3>
-                <p className="text-slate-400 leading-relaxed mb-6 text-sm md:text-base">View our complete list of verified players, connect with the community, and find match partners.</p>
+                <h3 className="text-lg md:text-2xl font-bold mb-1.5 md:mb-3 text-white tracking-wide">Club Directory</h3>
+                <p className="text-slate-400 leading-relaxed mb-5 text-xs md:text-base">View our complete list of verified players, connect with the community, and find match partners.</p>
               </div>
-              <Link to="/members" className="text-white font-bold group-hover:text-slate-300 uppercase text-sm tracking-wider flex items-center gap-2 transition-colors duration-300 mt-auto pt-4 border-t border-white/[0.03] w-max">View Roster →</Link>
+              <Link to="/members" className="text-white font-bold group-hover:text-slate-300 uppercase text-[10px] md:text-sm tracking-wider flex items-center gap-1.5 transition-colors duration-300 mt-auto pt-3 border-t border-white/[0.03] w-max">View Roster →</Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* 3. LIVE CAROUSELS SECTION (Courts & Coaches) */}
-      <section className="py-20 px-6 md:px-12 bg-white/5 border-y border-white/5 relative">
-        <div className="max-w-7xl mx-auto space-y-20">
+      <section className="py-12 md:py-20 px-4 sm:px-6 md:px-12 bg-white/5 border-y border-white/5 relative">
+        <div className="max-w-7xl mx-auto space-y-12 md:space-y-20">
           
           {/* COURTS CAROUSEL */}
           {courts && courts.length > 0 && (
             <div>
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-6 h-6 text-cnpc-accent" />
-                  <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">Where To Play</h2>
+              <div className="flex items-center justify-between mb-4 md:mb-8">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 md:w-6 md:h-6 text-cnpc-accent" />
+                  <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white uppercase tracking-wider">Where To Play</h2>
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={prevCourtSlide} className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronLeft className="w-5 h-5"/></button>
-                  <button onClick={nextCourtSlide} className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronRight className="w-5 h-5"/></button>
+                <div className="flex gap-1.5">
+                  <button onClick={prevCourtSlide} className="p-1 md:p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronLeft className="w-4 h-4 md:w-5 md:h-5"/></button>
+                  <button onClick={nextCourtSlide} className="p-1 md:p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronRight className="w-4 h-4 md:w-5 md:h-5"/></button>
                 </div>
               </div>
 
               <div 
                 id="courts-slider" 
-                className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 group"
+                className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-3 group px-0.5"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {courts.map((court) => (
-                  <Link to="/courts" key={court._id} className="min-w-[300px] md:min-w-[350px] snap-center bg-[#0B0F19] border border-white/10 rounded-3xl overflow-hidden hover:border-cnpc-accent/40 transition-all hover:-translate-y-2 shadow-xl group/card">
-                    <div className="h-48 relative overflow-hidden bg-[#0A192F]">
-                      {/* SAFELY CHECK FOR COURT IMAGES */}
+                  <Link to="/courts" key={court._id} className="min-w-[260px] sm:min-w-[320px] md:min-w-[350px] snap-center bg-[#0B0F19] border border-white/10 rounded-xl md:rounded-3xl overflow-hidden hover:border-cnpc-accent/40 transition-all hover:shadow-xl group/card">
+                    <div className="h-36 md:h-48 relative overflow-hidden bg-[#0A192F]">
                       {court.images && court.images.length > 0 ? (
                         <img src={court.images[0]} alt={court.name} className="w-full h-full object-cover group-hover/card:scale-105 transition-all duration-700 opacity-80 group-hover/card:opacity-100" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-slate-800 text-slate-500 text-xs">No Image</div>
                       )}
-                      <div className="absolute bottom-3 left-3 bg-cnpc-accent text-slate-950 text-[10px] font-black uppercase px-2 py-1 rounded shadow-md">
+                      <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3 bg-cnpc-accent text-slate-950 text-[8px] md:text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-md">
                         {court.area}
                       </div>
                     </div>
-                    <div className="p-5">
-                      <h3 className="text-xl font-bold mb-2 text-white line-clamp-1">{court.name}</h3>
-                      <div className="flex items-center gap-2 text-sm text-slate-400"><MapPin className="w-4 h-4 shrink-0" /> <span className="line-clamp-1">{court.address}</span></div>
+                    <div className="p-3.5 md:p-5">
+                      <h3 className="text-base md:text-xl font-bold mb-1 text-white line-clamp-1">{court.name}</h3>
+                      <div className="flex items-center gap-1.5 text-xs md:text-sm text-slate-400"><MapPin className="w-3.5 h-3.5 shrink-0 text-slate-500" /> <span className="line-clamp-1">{court.address}</span></div>
                     </div>
                   </Link>
                 ))}
@@ -392,31 +475,31 @@ const Home = () => {
           {/* COACHES CAROUSEL */}
           {coaches && coaches.length > 0 && (
             <div>
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <Award className="w-6 h-6 text-cnpc-accent" />
-                  <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">Meet the Coaches</h2>
+              <div className="flex items-center justify-between mb-4 md:mb-8">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 md:w-6 md:h-6 text-cnpc-accent" />
+                  <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white uppercase tracking-wider">Meet the Coaches</h2>
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={prevCoachSlide} className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronLeft className="w-5 h-5"/></button>
-                  <button onClick={nextCoachSlide} className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronRight className="w-5 h-5"/></button>
+                <div className="flex gap-1.5">
+                  <button onClick={prevCoachSlide} className="p-1 md:p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronLeft className="w-4 h-4 md:w-5 md:h-5"/></button>
+                  <button onClick={nextCoachSlide} className="p-1 md:p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"><ChevronRight className="w-4 h-4 md:w-5 md:h-5"/></button>
                 </div>
               </div>
 
               <div 
                 id="coaches-slider" 
-                className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 group"
+                className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-3 group px-0.5"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {coaches.map((coach) => (
-                  <Link to="/coaches" key={coach._id} className="min-w-[300px] md:min-w-[350px] snap-center bg-[#0B0F19] border border-white/10 rounded-3xl p-6 hover:border-cnpc-accent/40 transition-all hover:-translate-y-2 shadow-xl flex items-center gap-5">
-                    <div className="w-20 h-20 shrink-0 rounded-full overflow-hidden border-2 border-white/10 bg-[#0A192F]">
+                  <Link to="/coaches" key={coach._id} className="min-w-[260px] sm:min-w-[320px] md:min-w-[350px] snap-center bg-[#0B0F19] border border-white/10 rounded-xl md:rounded-3xl p-4 md:p-6 hover:border-cnpc-accent/40 transition-all hover:shadow-xl flex items-center gap-3.5 md:gap-5">
+                    <div className="w-14 h-14 md:w-20 md:h-20 shrink-0 rounded-full overflow-hidden border-2 border-white/10 bg-[#0A192F]">
                       <img src={coach.image} alt={coach.name} className="w-full h-full object-cover" />
                     </div>
-                    <div>
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-cnpc-accent uppercase tracking-widest mb-1"><Star className="w-3 h-3 fill-cnpc-accent"/> Official</div>
-                      <h3 className="text-lg font-black text-white uppercase tracking-wide leading-tight mb-1">{coach.name}</h3>
-                      <p className="text-sm text-slate-400 line-clamp-2 italic">"{coach.tagline}"</p>
+                    <div className="min-w-0"> 
+                      <div className="flex items-center gap-0.5 text-[8px] md:text-[10px] font-bold text-cnpc-accent uppercase tracking-widest mb-0.5"><Star className="w-2.5 h-2.5 fill-cnpc-accent"/> Official</div>
+                      <h3 className="text-sm md:text-lg font-black text-white uppercase tracking-wide leading-tight mb-0.5 truncate">{coach.name}</h3>
+                      <p className="text-[11px] md:text-sm text-slate-400 line-clamp-2 italic pr-1">"{coach.tagline}"</p>
                     </div>
                   </Link>
                 ))}
@@ -428,60 +511,57 @@ const Home = () => {
       </section>
 
       {/* 4. COMMUNITY POSTS SECTION (Single FB-Style Card) */}
-      <section className="py-20 px-6 md:px-12 relative bg-gradient-to-br from-[#0B0F19] via-[#112A58] to-[#0B0F19] border-t border-white/5 overflow-hidden">
+      <section className="py-12 md:py-20 px-4 sm:px-6 md:px-12 relative bg-gradient-to-br from-[#0B0F19] via-[#112A58] to-[#0B0F19] border-t border-white/5 overflow-hidden">
         
-        {/* Subtle cyan/blue background glow matching logo hues */}
-        <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-blue-500/10 blur-[150px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-1/4 right-0 w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-blue-500/10 blur-[80px] md:blur-[150px] rounded-full pointer-events-none"></div>
 
-        {/* max-w-2xl restricts the width perfectly to resemble a social media feed card */}
-        <div className="max-w-2xl mx-auto relative z-10">
+        <div className="max-w-2xl mx-auto relative z-10 w-full">
           
-          <div className="flex items-center gap-3 pb-4 border-b border-white/10 mb-8">
-            <Megaphone className="w-8 h-8 text-cnpc-accent" />
-            <h2 className="text-3xl font-black text-white uppercase tracking-wider">Latest Update</h2>
+          <div className="flex items-center gap-2 pb-3 border-b border-white/10 mb-5 md:mb-8">
+            <Megaphone className="w-5 h-5 md:w-8 md:h-8 text-cnpc-accent" />
+            <h2 className="text-xl md:text-3xl font-black text-white uppercase tracking-wider">Latest Update</h2>
           </div>
           
           {posts && posts.length === 0 ? (
-            <div className="bg-[#1A3668]/40 backdrop-blur-md border border-blue-400/20 rounded-2xl p-12 text-center shadow-2xl">
-              <p className="text-slate-400 italic font-medium">No recent community posts at the moment.</p>
+            <div className="bg-[#1A3668]/40 backdrop-blur-md border border-blue-400/20 rounded-xl md:rounded-2xl p-8 md:p-12 text-center shadow-2xl">
+              <p className="text-slate-400 italic font-medium text-xs md:text-base">No recent community posts at the moment.</p>
             </div>
           ) : (
             posts.slice(0, 1).map((post) => (
-              <div key={post._id} className="bg-[#1A3668]/40 backdrop-blur-md border border-blue-400/20 rounded-2xl overflow-hidden shadow-2xl">
+              <div key={post._id} className="bg-[#1A3668]/40 backdrop-blur-md border border-blue-400/20 rounded-xl md:rounded-2xl overflow-hidden shadow-2xl w-full">
                 
                 {/* POST HEADER (FB Style: Avatar + Name + Date) */}
-                <div className="p-5 pb-3">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cnpc-accent to-lime-400 flex items-center justify-center text-slate-900 font-bold shrink-0 shadow-md">
-                        <ShieldCheck className="w-5 h-5" />
+                <div className="p-4 md:p-5 pb-2 md:pb-3">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2 md:gap-3">
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-cnpc-accent to-lime-400 flex items-center justify-center text-slate-900 font-bold shrink-0 shadow-md">
+                        <ShieldCheck className="w-4 h-4 md:w-5 md:h-5" />
                       </div>
                       <div className="flex flex-col">
-                        <h4 className="font-bold text-white text-base leading-tight flex items-center gap-2">
+                        <h4 className="font-bold text-white text-xs md:text-base leading-tight flex items-center gap-1 md:gap-2">
                           CNPC Admin {post.isPinned && <Pin className="w-3 h-3 text-cnpc-accent" />}
                         </h4>
-                        <span className="text-xs text-slate-400">{formatDate(post.createdAt)}</span>
+                        <span className="text-[9px] md:text-xs text-slate-400">{formatDate(post.createdAt)}</span>
                       </div>
                     </div>
                   </div>
                   
                   {/* POST CONTENT (Title + Text + See More) */}
-                  <h5 className="font-black text-white text-lg uppercase tracking-wide mb-2">{post.title}</h5>
+                  <h5 className="font-black text-sm md:text-lg uppercase tracking-wide mb-1.5">{post.title}</h5>
                   
                   <SmartLinkifier text={post.content} isExpanded={isPostExpanded} />
                   
-                  {/* Show "See More" if text is over ~200 chars */}
                   {post.content && post.content.length > 200 && (
                     <button 
                       onClick={() => setIsPostExpanded(!isPostExpanded)} 
-                      className="text-cnpc-accent text-sm font-bold hover:underline mb-2 transition-all"
+                      className="text-cnpc-accent text-[11px] md:text-sm font-bold hover:underline mb-1 transition-all"
                     >
                       {isPostExpanded ? 'See less' : '... See more'}
                     </button>
                   )}
                 </div>
                 
-                {/* POST IMAGES (Full Bleed - Touching the edges like social media) */}
+                {/* POST IMAGES (Full Bleed) */}
                 {post.images && post.images.length > 0 && (
                   <div className={`grid gap-0.5 bg-[#0B0F19] ${post.images.length === 1 ? 'grid-cols-1' : post.images.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'}`}>
                     {post.images.map((img, i) => (
@@ -490,7 +570,7 @@ const Home = () => {
                         src={img} 
                         alt="Post attachment" 
                         onClick={() => openLightbox(post.images, i)} 
-                        className={`w-full object-cover cursor-pointer hover:opacity-90 transition-opacity ${post.images.length === 1 ? 'max-h-[500px]' : 'h-40 sm:h-56'}`}
+                        className={`w-full object-cover cursor-pointer hover:opacity-90 transition-opacity ${post.images.length === 1 ? 'max-h-[260px] md:max-h-[500px]' : 'h-24 sm:h-40 md:h-56'}`}
                       />
                     ))}
                   </div>
@@ -500,8 +580,8 @@ const Home = () => {
           )}
           
           {posts && posts.length > 0 && (
-            <div className="mt-8 text-center">
-              <Link to="/events" className="inline-block bg-blue-500/10 hover:bg-blue-500/20 border border-blue-400/30 text-blue-300 px-8 py-3 rounded-full font-bold text-sm uppercase tracking-widest transition-all">
+            <div className="mt-6 md:mt-8 text-center">
+              <Link to="/events" className="inline-block bg-blue-500/10 hover:bg-blue-500/20 border border-blue-400/30 text-blue-300 px-5 py-2.5 md:px-8 md:py-3 rounded-full font-bold text-[11px] md:text-sm uppercase tracking-widest transition-all">
                 View All Posts →
               </Link>
             </div>

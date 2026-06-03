@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Megaphone, Pin, Loader2, X, ChevronLeft, ChevronRight, ShieldCheck } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 // =========================================
 // HELPER COMPONENT: SmartLinkifier
 // =========================================
@@ -137,7 +139,7 @@ const Events = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/posts');
+        const response = await fetch(`${API_URL}/api/posts`);
         if (response.ok) setPosts(await response.json());
       } catch (error) { console.error("Failed to fetch posts:", error); } 
       finally { setIsLoading(false); }

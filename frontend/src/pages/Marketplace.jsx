@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Search, Tag, X, MessageCircle, ExternalLink, CheckCircle, Filter, Loader2, ShieldCheck, UserCircle } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Marketplace = () => {
   const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ const Marketplace = () => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/items/approved');
+        const res = await fetch(`${API_URL}/api/items/approved`);
         if (res.ok) {
           const data = await res.json();
           // Map backend data to fit your custom UI structure
@@ -82,7 +84,7 @@ const Marketplace = () => {
     formData.append('image', imageFile);
 
     try {
-      const response = await fetch('http://localhost:5000/api/items', {
+      const response = await fetch(`${API_URL}/api/items`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }, 
         body: formData

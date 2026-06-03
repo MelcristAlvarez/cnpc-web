@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Users, ShieldCheck, Loader2, MapPin, Search, ExternalLink, Star, Target } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Members = () => {
   const [members, setMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -10,7 +12,7 @@ const Members = () => {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/members');
+        const response = await fetch(`${API_URL}/api/members`);
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data)) {
