@@ -364,12 +364,14 @@ const Profile = () => {
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl p-6 md:p-8 animate-in fade-in duration-500 delay-100">
-              <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/5">
+              
+              {/* FIXED: Using responsive flex-col to stack button on mobile, preventing overlap */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/5">
                 <div className="flex items-center gap-3">
-                  <Tag className="w-6 h-6 text-cnpc-accent" />
-                  <h2 className="text-xl font-black text-white uppercase tracking-wider">My Marketplace Listings</h2>
+                  <Tag className="w-5 h-5 sm:w-6 sm:h-6 text-cnpc-accent shrink-0" />
+                  <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-wider leading-tight">My Marketplace Listings</h2>
                 </div>
-                <button onClick={() => navigate('/marketplace')} className="text-sm font-bold text-cnpc-accent hover:text-white uppercase tracking-wider transition-colors">
+                <button onClick={() => navigate('/marketplace')} className="text-xs sm:text-sm font-bold text-cnpc-accent hover:text-white uppercase tracking-wider transition-colors shrink-0">
                   Go to Marketplace &rarr;
                 </button>
               </div>

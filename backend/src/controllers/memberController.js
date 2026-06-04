@@ -9,6 +9,15 @@ const getAllMembers = async (req, res) => {
 
 const createMember = async (req, res) => {
   try {
+    // Check for duplicates before creating
+    const existingMember = await Member.findOne({ 
+      name: { $regex: new RegExp(`^${req.body.name.trim()}$`, 'i') } 
+    });
+    
+    if (existingMember) {
+      return res.status(400).json({ error: `Player "${req.body.name}" is already on the list and cannot be duplicated.` });
+    }
+
     const newMember = new Member(req.body);
     const savedMember = await newMember.save();
     res.status(201).json(savedMember);

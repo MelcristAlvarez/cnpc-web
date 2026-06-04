@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, MapPin } from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 import logoImg from '../assets/images/cnpc-icon.jpg';
 
 const Footer = () => {
@@ -40,12 +40,15 @@ const Footer = () => {
 
                     {/* Quick Links */}
                     <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                        <h4 className="text-white font-black uppercase tracking-widest mb-6">Explore</h4>
+                        <h4 className="text-white font-black uppercase tracking-widest mb-6">Hub Features</h4>
                         <div className="flex flex-col gap-3 text-sm font-bold text-slate-400 uppercase tracking-wider">
-                            <Link to="/events" className="hover:text-cnpc-accent transition-colors">Upcoming Events</Link>
-                            <Link to="/coaches" className="hover:text-cnpc-accent transition-colors">Find a Coach</Link>
-                            <Link to="/dupr" className="hover:text-cnpc-accent transition-colors">DUPR Standings</Link>
-                            <Link to="/marketplace" className="hover:text-cnpc-accent transition-colors">Marketplace</Link>
+                            <Link to="/" className="hover:text-cnpc-accent transition-colors">The Hub</Link>
+                            <Link to="/events" className="hover:text-cnpc-accent transition-colors">Events</Link>
+                            <Link to="/courts" className="hover:text-cnpc-accent transition-colors">Courts</Link>
+                            <Link to="/coaches" className="hover:text-cnpc-accent transition-colors">Coaches</Link>
+                            <Link to="/members" className="hover:text-cnpc-accent transition-colors">Roster</Link>
+                            <Link to="/dupr" className="hover:text-cnpc-accent transition-colors">DUPR</Link>
+                            <Link to="/marketplace" className="hover:text-cnpc-accent transition-colors">Market</Link>
                         </div>
                     </div>
 
@@ -55,11 +58,17 @@ const Footer = () => {
                         <div className="space-y-4 text-slate-400 text-sm">
                             <div className="flex items-center justify-center md:justify-start gap-3">
                                 <MapPin className="w-5 h-5 text-cnpc-accent shrink-0" />
-                                <span>Daet, Camarines Norte, Philippines</span>
+                                <a href="https://maps.app.goo.gl/VLuq44WydbYBtgZs9" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                    Daet, Camarines Norte, Philippines
+                                </a>
+                            </div>
+                            <div className="flex items-center justify-center md:justify-start gap-3">
+                                <Phone className="w-5 h-5 text-cnpc-accent shrink-0" />
+                                <a href="tel:+63949281845" className="hover:text-white transition-colors">+63949281845</a>
                             </div>
                             <div className="flex items-center justify-center md:justify-start gap-3">
                                 <Mail className="w-5 h-5 text-cnpc-accent shrink-0" />
-                                <a href="mailto:cnpcdev@gmail.com" className="hover:text-white transition-colors">cnpcdev@gmail.com</a>
+                                <a href="mailto:mackydacudao@gmail.com" className="hover:text-white transition-colors">mackydacudao@gmail.com</a>
                             </div>
                         </div>
                     </div>
@@ -68,7 +77,7 @@ const Footer = () => {
 
                 {/* Copyright */}
                 <div className="border-t border-white/10 pt-8 flex items-center justify-center text-xs font-bold text-slate-500 uppercase tracking-widest text-center">
-                    <p>&copy; {new Date().getFullYear()} Camarines Norte Pickleball Club. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} Camarines Norte Pickleball Club. All rights reserved.</p>
                 </div>
             </div>
         </footer>

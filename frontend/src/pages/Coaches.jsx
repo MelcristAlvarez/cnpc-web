@@ -26,19 +26,19 @@ const Coaches = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-100 font-sans pt-36 pb-20 px-6 lg:px-12">
+    <div className="min-h-screen bg-[#0B0F19] text-slate-100 font-sans pt-36 pb-20 px-4 sm:px-6 lg:px-12">
       <div className="max-w-6xl mx-auto">
         
         {/* Header Section */}
-        <div className="mb-12">
-          <div className="inline-block bg-white/5 border border-white/10 text-slate-300 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+        <div className="mb-8 md:mb-12">
+          <div className="inline-block bg-white/5 border border-white/10 text-slate-300 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4 md:mb-6">
             Learn Pickleball
           </div>
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white mb-4">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white mb-3">
             <span className="text-cnpc-accent">Coaches </span> 
-            WITHIN THE COMMUNITY
+            <br className="block sm:hidden" />WITHIN THE COMMUNITY
           </h1>
-          <p className="text-slate-400 max-w-2xl text-lg">
+          <p className="text-slate-400 max-w-2xl text-sm md:text-lg">
             Elevate your game with guidance from our recognized local community coaches. From beginners learning the fundamentals to advanced players refining tournament strategies.
           </p>
         </div>
@@ -55,32 +55,29 @@ const Coaches = () => {
             <p className="text-slate-400">We are currently reviewing coach applications. Check back soon!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             {coaches.map((coach) => {
-              // Safely split strings into arrays for mapping and filter out empty values
               const certsArray = coach.certs ? coach.certs.split(',').filter(c => c.trim() !== '') : [];
               const achievementsArray = coach.achievements ? coach.achievements.split(',').filter(a => a.trim() !== '') : [];
 
               return (
-                <div key={coach._id} className="bg-[#131B2B] border border-white/5 rounded-3xl overflow-hidden shadow-2xl flex flex-col sm:flex-row group transition-all">
+                <div key={coach._id} className="bg-[#131B2B] border border-white/5 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col sm:flex-row group transition-all">
                   
                   {/* Left Side: Coach Image */}
-                  <div className="sm:w-2/5 h-72 sm:h-auto relative overflow-hidden bg-[#0A192F] shrink-0 border-r border-white/5">
+                  <div className="w-full sm:w-2/5 h-40 sm:h-auto relative overflow-hidden bg-[#0A192F] shrink-0 border-b sm:border-b-0 sm:border-r border-white/5">
                     <img 
                       src={coach.image} 
                       alt={coach.name} 
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" 
                     />
-                    {/* Mobile Gradient fade */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#131B2B] via-transparent to-transparent sm:hidden"></div>
                   </div>
 
                   {/* Right Side: Coach Details */}
-                  <div className="p-8 sm:w-3/5 flex flex-col">
+                  <div className="p-4 md:p-8 sm:w-3/5 flex flex-col">
                     
-                    {/* Top Badges (DUPR, PPR, etc.) */}
                     {certsArray.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
                         {certsArray.map((cert, index) => (
                           <span key={index} className="bg-[#1A2436] border border-cnpc-accent/30 text-cnpc-accent text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">
                             {cert.trim()}
@@ -89,28 +86,25 @@ const Coaches = () => {
                       </div>
                     )}
 
-                    {/* Name & Official Title */}
-                    <h2 className="text-2xl font-black text-white uppercase tracking-wide mb-1">
+                    <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-wide mb-1">
                       {coach.name}
                     </h2>
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                      <Star className="w-3.5 h-3.5 text-cnpc-accent" />
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 md:mb-4">
+                      <Star className="w-3 h-3 text-cnpc-accent" />
                       Official CNPC Coach
                     </div>
 
-                    {/* Yellow Vertical Tagline */}
-                    <div className="mb-6 border-l-2 border-cnpc-accent pl-3">
-                      <p className="text-slate-300 italic text-sm">
+                    <div className="mb-4 md:mb-6 border-l-2 border-cnpc-accent pl-3">
+                      <p className="text-slate-300 italic text-xs md:text-sm">
                         "{coach.tagline}"
                       </p>
                     </div>
 
-                    {/* Resume / Achievements List (Replaced Trophy with CheckCircle2) */}
                     {achievementsArray.length > 0 && (
-                      <div className="space-y-3 mb-8">
+                      <div className="space-y-2 md:space-y-3 mb-6 md:mb-8">
                         {achievementsArray.map((achievement, i) => (
-                          <div key={i} className="flex items-start gap-3">
-                            <CheckCircle2 className="w-4 h-4 text-cnpc-accent shrink-0 mt-0.5" />
+                          <div key={i} className="flex items-start gap-2.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-cnpc-accent shrink-0 mt-0.5" />
                             <span className="text-xs text-slate-300 leading-snug">
                               {achievement.trim()}
                             </span>
@@ -119,21 +113,20 @@ const Coaches = () => {
                       </div>
                     )}
 
-                    {/* Contact Buttons */}
                     <div className="mt-auto flex gap-2 flex-wrap">
                       {coach.facebook && (
-                        <a href={coach.facebook} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-[#1877F2] py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
-                          <FaFacebook className="w-4 h-4" /> FB
+                        <a href={coach.facebook} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-[#1877F2] py-2 md:py-2.5 rounded-lg md:rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all">
+                          <FaFacebook className="w-3.5 h-3.5" /> FB
                         </a>
                       )}
                       {coach.email && (
-                        <a href={`mailto:${coach.email}`} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
-                          <Mail className="w-4 h-4" /> Email
+                        <a href={`mailto:${coach.email}`} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-2 md:py-2.5 rounded-lg md:rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all">
+                          <Mail className="w-3.5 h-3.5" /> Email
                         </a>
                       )}
                       {coach.phone && (
-                        <a href={`tel:${coach.phone}`} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
-                          <Phone className="w-4 h-4" /> Phone
+                        <a href={`tel:${coach.phone}`} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-2 md:py-2.5 rounded-lg md:rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all">
+                          <Phone className="w-3.5 h-3.5" /> Phone
                         </a>
                       )}
                     </div>
