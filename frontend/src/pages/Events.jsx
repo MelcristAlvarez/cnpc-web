@@ -158,14 +158,14 @@ const Events = () => {
         <ImageLightboxModal images={lightbox.images} currentIndex={lightbox.currentIndex} onClose={closeLightbox} onPrev={prevImage} onNext={nextImage} />
       )}
 
-      {/* REPLACED max-w-4xl WITH max-w-2xl TO MATCH FACEBOOK FEED WIDTH */}
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-16">
           <div className="inline-block bg-white/5 border border-white/10 text-slate-300 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Latest Updates
           </div>
+          {/* Fixed: Header updated to Club Events with green accent */}
           <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white mb-4">
-            Community <span className="text-cnpc-accent">Posts</span>
+            Club <span className="text-cnpc-accent">Events</span>
           </h1>
           <p className="text-slate-400 text-lg">
             Stay updated with the latest news, announcements, and match results.

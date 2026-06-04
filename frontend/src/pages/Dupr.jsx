@@ -1,7 +1,6 @@
 import { Trophy, ExternalLink, Activity, Users, Target } from 'lucide-react';
 
 const Dupr = () => {
-  // Your official CNPC DUPR Link
   const duprClubUrl = "https://dashboard.dupr.com/dashboard/browse/clubs/6525623784";
 
   return (
@@ -17,8 +16,9 @@ const Dupr = () => {
           <div className="inline-block bg-white/5 border border-white/10 text-slate-300 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Official CNPC Roster
           </div>
+          {/* Fixed: Colored DUPR instead of Ratings */}
           <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white mb-6">
-            Club DUPR <span className="text-cnpc-accent">Ratings</span>
+            Club <span className="text-cnpc-accent">DUPR</span> Ratings
           </h1>
           <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
             Track player progress, view official club standings, and ensure fair match placement within the Camarines Norte Pickleball Club network.
