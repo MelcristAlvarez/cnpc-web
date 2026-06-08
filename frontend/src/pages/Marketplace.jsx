@@ -289,14 +289,14 @@ const Marketplace = () => {
             {!user ? (
               /* RESTRICTED ACCESS VIEW */
               <div className="flex flex-col items-center justify-center py-8 text-center">
-                <ShieldCheck className="w-20 h-20 text-slate-600 mb-6" />
-                <h2 className="text-2xl font-black text-white uppercase tracking-wide mb-4">Members Only</h2>
-                <p className="text-slate-400 mb-8 max-w-sm">You must be logged in with a verified account to list gear on the marketplace.</p>
+                <UserCircle className="w-20 h-20 text-slate-600 mb-6" />
+                <h2 className="text-2xl font-black text-white uppercase tracking-wide mb-4">Account Required</h2>
+                <p className="text-slate-400 mb-8 max-w-sm">Please create an account or log in first so that the website can attach your official profile when listing items.</p>
                 <button 
                   onClick={() => navigate('/auth')} 
                   className="w-full bg-gradient-to-r from-cnpc-accent to-lime-400 text-slate-950 py-4 rounded-xl font-bold uppercase tracking-widest hover:brightness-110 transition-all"
                 >
-                  Log In to Continue
+                  Create Account / Log In
                 </button>
               </div>
             ) : !isSubmitted ? (
