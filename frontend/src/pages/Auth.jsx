@@ -9,6 +9,9 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
+  // Track if the privacy consent box is checked
+  const [consentGiven, setConsentGiven] = useState(false);
+  
   const { login, register } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,6 +24,13 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+
+    // Privacy Consent Validation (Only checked during Registration)
+    if (!isLogin && !consentGiven) {
+      setError('You must agree to the privacy policy to create an account.');
+      setIsLoading(false);
+      return;
+    }
 
     let result;
     if (isLogin) {
@@ -55,7 +65,7 @@ const Auth = () => {
 
         <div className="bg-[#0B0F19]/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold px-4 py-3 rounded-xl mb-6 text-center">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold px-4 py-3 rounded-xl mb-6 text-center animate-in zoom-in duration-300">
               {error}
             </div>
           )}
@@ -87,6 +97,29 @@ const Auth = () => {
               </div>
             </div>
 
+            {/* Privacy Consent Checkbox - Updated Text */}
+            {!isLogin && (
+              <div className="flex items-start gap-3 mt-4 bg-white/[0.02] border border-white/5 p-4 rounded-xl">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    id="privacy-consent"
+                    type="checkbox"
+                    checked={consentGiven}
+                    onChange={(e) => {
+                      setConsentGiven(e.target.checked);
+                      setError(''); // Clear error when they check the box
+                    }}
+                    className="w-4 h-4 rounded bg-white/5 border-white/20 accent-cnpc-accent cursor-pointer"
+                  />
+                </div>
+                <div className="text-[11px] text-slate-400 leading-relaxed">
+                  <label htmlFor="privacy-consent" className="cursor-pointer">
+                    I consent to the collection and storage of my personal information by this website in accordance with the Data Privacy Act.
+                  </label>
+                </div>
+              </div>
+            )}
+
             <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-cnpc-accent to-lime-400 text-slate-950 py-4 rounded-xl font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-4 disabled:opacity-70">
               {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
               {isLogin ? 'Sign In' : 'Create Account'}
@@ -96,7 +129,14 @@ const Auth = () => {
           <div className="mt-8 text-center border-t border-white/10 pt-6">
             <p className="text-sm text-slate-400">
               {isLogin ? "Don't have an account yet?" : "Already a member?"}
-              <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="ml-2 text-cnpc-accent hover:text-white font-bold uppercase tracking-wider transition-colors">
+              <button 
+                onClick={() => { 
+                  setIsLogin(!isLogin); 
+                  setError(''); 
+                  setConsentGiven(false); // Reset consent box when toggling
+                }} 
+                className="ml-2 text-cnpc-accent hover:text-white font-bold uppercase tracking-wider transition-colors"
+              >
                 {isLogin ? 'Register Here' : 'Log In Here'}
               </button>
             </p>
