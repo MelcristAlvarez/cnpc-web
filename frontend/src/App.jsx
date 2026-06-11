@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop'; // 1. Import the helper
@@ -36,6 +37,7 @@ function App() {
         </main>
 
         <Footer />
+        <Analytics />
       </div>
     </Router>
   );
